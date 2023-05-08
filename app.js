@@ -11,9 +11,7 @@ let editFlag = false;
 let editID = '';
 
 form.addEventListener('submit', addItem);
-
 clearBtn.addEventListener('click', clearItems);
-
 
 function addItem(e){
     e.preventDefault();
@@ -27,13 +25,19 @@ function addItem(e){
         element.setAttributeNode(attr);
         element.innerHTML = `<p class="title">${value}</p>
         <div class="btn-container">
-            <button class="button" class="edit-btn">
+            <button type="button" class="edit-btn">
                 <i class="fas fa-edit"></i>
             </button>
-            <button class="button" class="delete-btn">
+            <button type="button" class="delete-btn">
                 <i class="fas fa-trash"></i>
             </button>
         </div>`;
+
+        const deleteBtn = element.querySelector('.delete-btn');
+        const editBtn = element.querySelector('.edit-btn');
+        deleteBtn.addEventListener('click', deleteItem);
+        editBtn.addEventListener('click', editItem);
+
         list.appendChild(element);
 
         displayAlert('item added to the list', 'success');
@@ -43,7 +47,10 @@ function addItem(e){
         setBackToDefault();
     }
     else if(value && editFlag){
-        console.log('editing');
+        editElement.innerHTML = value;
+        displayAlert('value changed', 'success');
+        editLocalStorage(editID, value)
+        setBackToDefault();
     } else{
        displayAlert('please enter value', 'danger')
     }
@@ -79,6 +86,35 @@ function clearItems(){
     setBackToDefault();
 }
 
+function deleteItem(e){
+    const element = e.currentTarget.parentElement.parentElement;
+    const id = element.dataset.id;
+    list.removeChild(element);
+    if(list.children.length === 0){
+        container.classList.remove('show-container');
+    }
+    displayAlert('item removed', 'danger');
+    setBackToDefault();
+    // removeFromLocalStorage(id);
+}
+
+function editItem(e){
+    const element = e.currentTarget.parentElement.parentElement;
+    editElement = e.currentTarget.parentElement.previousElementSibling;
+    grocery.value = editElement.innerHTML;
+    editFlag = true;
+    editID = element.dataset.id;
+    submitBtn.textContent = 'edit';
+}
+
 function addToLocalStorage(id, value){
     console.log('added to local storage');
+}
+
+function removeFromLocalStorage(id){
+
+}
+
+function editLocalStorage(id, value){
+    
 }
